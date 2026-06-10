@@ -1,0 +1,55 @@
+name: Auto PR for feature branches
+
+# Abre (ou atualiza) automaticamente um Pull Request para `main` sempre que
+# um branch `feature-*` recebe um push. Se um PR aberto já existir para o
+# branch, o push apenas o atualiza — nenhum PR duplicado é criado.
+
+on:
+  push:
+    branches:
+      - 'feature-*'
+      - 'feature/**'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  open-pr:
+    name: Open PR to main
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create or update Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          # Já existe um PR aberto para este branch?
+          existing=$(gh pr list --head "$BRANCH" --base main --state open --json number --jq '.[0].number')
+
+          if [ -n "$existing" ]; then
+            echo "PR #$existing já existe para $BRANCH — push atualiza automaticamente."
+            exit 0
+          fi
+
+          title="${BRANCH#feature-}"
+          title="${title#feature/}"
+
+          gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "feature: ${title}" \
+            --body "$(cat <<'EOF'
+          PR aberto automaticamente a partir de um branch `feature-*`.
+
+          ## Checklist
+          - [ ] `npm run build` passa limpo
+          - [ ] Mudanças revisadas
+          - [ ] Pronto para merge em `main`
+
+          > 🤖 Gerado pelo workflow `auto-pr.yml`.
+          EOF
+          )"

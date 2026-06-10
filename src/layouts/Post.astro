@@ -1,0 +1,117 @@
+---
+import Base from './Base.astro';
+
+export interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  tags?: string[];
+}
+
+const { title, description, pubDate, tags = [] } = Astro.props;
+
+const formattedDate = pubDate.toLocaleDateString('pt-BR', {
+  day: '2-digit',
+  month: 'long',
+  year: 'numeric',
+});
+const isoDate = pubDate.toISOString();
+---
+
+<Base
+  title={title}
+  description={description}
+  ogTitle={title}
+  ogDescription={description}
+>
+  <article class="post">
+    <header class="post-header">
+      <a href="/blog" class="back-link">← Todos os artigos</a>
+      <time datetime={isoDate} class="post-date">{formattedDate}</time>
+      <h1 class="post-title">{title}</h1>
+      <p class="post-description">{description}</p>
+      {
+        tags.length > 0 && (
+          <ul class="post-tags">
+            {tags.map((tag) => (
+              <li>
+                <a href={`/tags/${tag}`} class="post-tag">
+                  #{tag}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </header>
+
+    <div class="post-body">
+      <slot />
+    </div>
+  </article>
+
+  <style>
+    .post-header {
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .back-link {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+      display: inline-block;
+      margin-bottom: 1.25rem;
+    }
+    .back-link:hover {
+      color: var(--color-accent);
+      text-decoration: none;
+    }
+
+    .post-date {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+    }
+
+    .post-title {
+      margin: 0.4rem 0 0.6rem;
+      font-size: 2.1rem;
+    }
+
+    .post-description {
+      color: var(--color-text-muted);
+      font-size: 1.05rem;
+      margin: 0;
+    }
+
+    .post-tags {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1.1rem 0 0;
+      padding: 0;
+    }
+    .post-tag {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+      border: 1px solid var(--color-border);
+      border-radius: 999px;
+      padding: 0.18rem 0.7rem;
+      background-color: var(--color-surface);
+    }
+    .post-tag:hover {
+      color: var(--color-accent);
+      border-color: var(--color-accent);
+      text-decoration: none;
+    }
+
+    .post-body :global(h2),
+    .post-body :global(h3) {
+      scroll-margin-top: 5rem;
+    }
+  </style>
+</Base>

@@ -1,0 +1,140 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PostCard from '../../components/PostCard.astro';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+// Unique, sorted tag list across all published posts.
+const allTags = [
+  ...new Set(posts.flatMap((post) => post.data.tags ?? [])),
+].sort((a, b) => a.localeCompare(b));
+---
+
+<Base
+  title="Artigos"
+  description="Todos os artigos do AssagraIsRoot.dev — Java, JVM, arquitetura, containers, Linux e segurança."
+>
+  <header class="page-header">
+    <h1>Artigos</h1>
+    <p class="subtitle">
+      Tudo que escrevi até agora. Filtre por tópico ou role a lista.
+    </p>
+  </header>
+
+  {
+    allTags.length > 0 && (
+      <div class="filters" role="group" aria-label="Filtrar por tag">
+        <button type="button" class="filter-btn active" data-filter="*">
+          Todos
+        </button>
+        {allTags.map((tag) => (
+          <button type="button" class="filter-btn" data-filter={tag}>
+            #{tag}
+          </button>
+        ))}
+      </div>
+    )
+  }
+
+  <div class="post-list" id="post-list">
+    {
+      posts.map((post) => (
+        <PostCard
+          title={post.data.title}
+          description={post.data.description}
+          pubDate={post.data.pubDate}
+          slug={post.slug}
+          tags={post.data.tags}
+        />
+      ))
+    }
+  </div>
+
+  <p class="empty" id="empty-state" hidden>
+    Nenhum artigo com essa tag ainda.
+  </p>
+
+  <style>
+    .page-header {
+      margin-bottom: 1.75rem;
+    }
+    .page-header h1 {
+      margin: 0 0 0.4rem;
+    }
+    .subtitle {
+      color: var(--color-text-muted);
+      margin: 0;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.75rem;
+    }
+    .filter-btn {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--color-text-muted);
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 999px;
+      padding: 0.3rem 0.85rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .filter-btn:hover {
+      color: var(--color-text);
+      border-color: var(--color-accent);
+    }
+    .filter-btn.active {
+      background-color: var(--color-accent);
+      border-color: var(--color-accent);
+      color: var(--color-bg);
+      font-weight: 600;
+    }
+
+    .post-list {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .empty {
+      color: var(--color-text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      margin-top: 1rem;
+    }
+  </style>
+
+  <script>
+    const buttons =
+      document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+    const cards = document.querySelectorAll<HTMLElement>('.post-card');
+    const emptyState = document.getElementById('empty-state');
+
+    function applyFilter(filter: string) {
+      let visible = 0;
+      cards.forEach((card) => {
+        const tags = (card.dataset.tags ?? '')
+          .split(',')
+          .filter(Boolean);
+        const show = filter === '*' || tags.includes(filter);
+        card.hidden = !show;
+        if (show) visible++;
+      });
+      if (emptyState) emptyState.hidden = visible !== 0;
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        buttons.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyFilter(btn.dataset.filter ?? '*');
+      });
+    });
+  </script>
+</Base>

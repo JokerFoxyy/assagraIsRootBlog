@@ -1,0 +1,85 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PostCard from '../../components/PostCard.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const tags = [...new Set(posts.flatMap((post) => post.data.tags ?? []))];
+
+  return tags.map((tag) => {
+    const filtered = posts
+      .filter((post) => post.data.tags?.includes(tag))
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+    return {
+      params: { tag },
+      props: { tag, posts: filtered },
+    };
+  });
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<Base
+  title={`Tag: ${tag}`}
+  description={`Artigos com a tag "${tag}" no AssagraIsRoot.dev.`}
+>
+  <header class="page-header">
+    <a href="/blog" class="back-link">← Todos os artigos</a>
+    <h1>
+      Posts com a tag: <span class="tag-name">#{tag}</span>
+    </h1>
+    <p class="subtitle">
+      {posts.length} {posts.length === 1 ? 'artigo' : 'artigos'}
+    </p>
+  </header>
+
+  <div class="post-list">
+    {
+      posts.map((post) => (
+        <PostCard
+          title={post.data.title}
+          description={post.data.description}
+          pubDate={post.data.pubDate}
+          slug={post.slug}
+          tags={post.data.tags}
+        />
+      ))
+    }
+  </div>
+
+  <style>
+    .page-header {
+      margin-bottom: 1.75rem;
+    }
+    .back-link {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+    .back-link:hover {
+      color: var(--color-accent);
+      text-decoration: none;
+    }
+    .page-header h1 {
+      margin: 0 0 0.4rem;
+    }
+    .tag-name {
+      font-family: var(--font-mono);
+      color: var(--color-accent);
+    }
+    .subtitle {
+      color: var(--color-text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      margin: 0;
+    }
+    .post-list {
+      display: grid;
+      gap: 1rem;
+    }
+  </style>
+</Base>

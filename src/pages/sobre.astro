@@ -1,0 +1,351 @@
+---
+import Base from '../layouts/Base.astro';
+
+const stack = [
+  {
+    category: 'Backend',
+    items: ['Java', 'Kotlin', 'C# / .NET', 'Spring Boot'],
+  },
+  {
+    category: 'Cloud & Infra',
+    items: [
+      'AWS SQS',
+      'AWS SNS',
+      'DynamoDB',
+      'S3',
+      'EventBridge',
+      'Lambda',
+      'Docker',
+      'Kafka',
+    ],
+  },
+  {
+    category: 'Observabilidade & CI/CD',
+    items: ['GitHub Actions', 'Datadog', 'CloudWatch'],
+  },
+  {
+    category: 'Estudando agora',
+    items: ['Go', 'Kubernetes', 'Linux internals', 'TryHackMe'],
+  },
+];
+
+const projects = [
+  {
+    title: 'ContratoIA',
+    description:
+      'SaaS de geração de contratos jurídicos brasileiros com IA, do upload ao PDF assinável.',
+    stack: [
+      'Java 21',
+      'Spring Boot 3.2',
+      'Keycloak',
+      'PostgreSQL',
+      'iText 8',
+      'Stripe',
+      'AWS SDK v2',
+      'Angular 17',
+    ],
+    href: '#',
+    soon: false,
+  },
+  {
+    title: 'AssagraIsRoot Blog',
+    description:
+      'Este blog — engenharia de software, JVM internals e segurança, escritos em público.',
+    stack: ['Astro 4', 'MDX', 'TypeScript', 'Vercel'],
+    href: '#',
+    soon: false,
+  },
+  {
+    title: 'Em breve',
+    description: 'Próximo projeto em incubação. Volte logo.',
+    stack: [],
+    href: '#',
+    soon: true,
+  },
+];
+
+const certifications = [
+  { name: 'AWS Certified Cloud Practitioner', status: 'concluída', done: true },
+  {
+    name: 'AWS Solutions Architect Associate',
+    status: 'em progresso',
+    done: false,
+  },
+  {
+    name: 'CKA — Certified Kubernetes Administrator',
+    status: 'planejada',
+    done: false,
+  },
+];
+---
+
+<Base
+  title="Sobre"
+  description="Victor Assagra — Software Engineer no Itaú Unibanco (Payments / PIX). Stack, projetos, certificações e formação."
+>
+  <!-- Hero / apresentação -->
+  <section class="hero">
+    <p class="kicker">// quem escreve aqui</p>
+    <h1>Victor Assagra</h1>
+    <p class="role">Software Engineer @ Itaú Unibanco — Payments / PIX</p>
+    <p class="bio">
+      Engenheiro curioso por natureza: não me contento com a abstração de cima,
+      gosto de descer a pilha e entender como as coisas realmente funcionam por
+      baixo — da JVM ao kernel do Linux, do byte no fio à transação que liquida.
+      Escrevo aqui o que aprendo no caminho.
+    </p>
+    <div class="links">
+      <a href="#" class="contact-link" rel="noopener noreferrer">GitHub ↗</a>
+      <a href="#" class="contact-link" rel="noopener noreferrer">LinkedIn ↗</a>
+      <a href="#" class="contact-link">E-mail ✉</a>
+    </div>
+  </section>
+
+  <!-- Stack -->
+  <section class="block">
+    <h2>Stack</h2>
+    <div class="stack-grid">
+      {
+        stack.map((group) => (
+          <div class="stack-group">
+            <h3 class="stack-category">{group.category}</h3>
+            <ul class="pills">
+              {group.items.map((item) => (
+                <li class="pill">{item}</li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Projetos -->
+  <section class="block">
+    <h2>Projetos</h2>
+    <div class="projects">
+      {
+        projects.map((project) => (
+          <article class:list={['project-card', { soon: project.soon }]}>
+            <div class="project-head">
+              <h3 class="project-title">{project.title}</h3>
+              {!project.soon && (
+                <a href={project.href} class="project-link" rel="noopener noreferrer">
+                  GitHub ↗
+                </a>
+              )}
+            </div>
+            <p class="project-desc">{project.description}</p>
+            {project.stack.length > 0 && (
+              <ul class="pills small">
+                {project.stack.map((tech) => (
+                  <li class="pill">{tech}</li>
+                ))}
+              </ul>
+            )}
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Certificações -->
+  <section class="block">
+    <h2>Certificações</h2>
+    <ul class="cert-list">
+      {
+        certifications.map((cert) => (
+          <li class:list={['cert', { done: cert.done }]}>
+            <span class="cert-mark">{cert.done ? '✓' : '○'}</span>
+            <span class="cert-name">{cert.name}</span>
+            <span class="cert-status">{cert.status}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- Educação -->
+  <section class="block">
+    <h2>Educação</h2>
+    <ul class="cert-list">
+      <li class="cert done">
+        <span class="cert-mark">🎓</span>
+        <span class="cert-name">Bacharelado em Engenharia da Computação</span>
+      </li>
+    </ul>
+  </section>
+
+  <style>
+    .hero {
+      padding-bottom: 2.5rem;
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: 2.5rem;
+    }
+    .kicker {
+      font-family: var(--font-mono);
+      color: var(--color-accent);
+      font-size: 0.85rem;
+      margin-bottom: 0.75rem;
+    }
+    .hero h1 {
+      margin: 0 0 0.3rem;
+      font-size: 2.2rem;
+    }
+    .role {
+      font-family: var(--font-mono);
+      color: var(--color-accent-warm);
+      font-size: 0.95rem;
+      margin: 0 0 1rem;
+    }
+    .bio {
+      color: var(--color-text-muted);
+      max-width: 62ch;
+      margin: 0 0 1.4rem;
+    }
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .contact-link {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 0.4rem 0.9rem;
+      color: var(--color-text);
+    }
+    .contact-link:hover {
+      border-color: var(--color-accent);
+      text-decoration: none;
+    }
+
+    .block {
+      margin-bottom: 3rem;
+    }
+    .block > h2 {
+      margin: 0 0 1.25rem;
+      font-size: 1.4rem;
+    }
+
+    /* Stack */
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+    .stack-category {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+      margin: 0 0 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .pills {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 0;
+      padding: 0;
+    }
+    .pill {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 999px;
+      padding: 0.25rem 0.75rem;
+      color: var(--color-text);
+    }
+    .pills.small .pill {
+      font-size: 0.72rem;
+      padding: 0.2rem 0.6rem;
+      color: var(--color-text-muted);
+    }
+
+    /* Projects */
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .project-card {
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      background-color: var(--color-surface);
+      padding: 1.25rem 1.4rem;
+      transition: border-color 0.15s ease;
+    }
+    .project-card:hover {
+      border-color: var(--color-accent);
+    }
+    .project-card.soon {
+      border-style: dashed;
+      opacity: 0.7;
+    }
+    .project-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .project-title {
+      margin: 0;
+      font-size: 1.15rem;
+    }
+    .project-link {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      white-space: nowrap;
+    }
+    .project-desc {
+      color: var(--color-text-muted);
+      font-size: 0.92rem;
+      margin: 0 0 0.9rem;
+    }
+
+    /* Certifications / education */
+    .cert-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.6rem;
+    }
+    .cert {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      background-color: var(--color-surface);
+      padding: 0.7rem 1rem;
+      font-size: 0.95rem;
+    }
+    .cert-mark {
+      font-family: var(--font-mono);
+      color: var(--color-text-muted);
+    }
+    .cert.done .cert-mark {
+      color: var(--color-accent);
+    }
+    .cert-name {
+      flex: 1;
+    }
+    .cert-status {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+    }
+
+    @media (max-width: 480px) {
+      .cert {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</Base>
