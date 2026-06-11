@@ -133,6 +133,9 @@ Canonical, `og:*` e `twitter:card` são resolvidos contra `site` do
 
 ### Fluxo de trabalho esperado
 
+> **`main` é protegida — push direto é bloqueado.** Todo trabalho entra por
+> PR a partir de um branch `feature-*`.
+
 1. Crie um branch `feature-<algo>` a partir de `main`.
 2. Faça commits e `git push`.
 3. O `auto-pr.yml` abre um PR para `main` automaticamente (pushes seguintes só
