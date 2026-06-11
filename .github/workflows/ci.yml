@@ -1,9 +1,11 @@
 name: CI
 
-# Valida type-check + build em todo push e PR que toque o código.
+# Valida type-check + build nos PRs para main e no merge em main.
+# (Push direto em main é bloqueado por branch protection — o gatilho de push
+# cobre apenas o commit de merge.)
 on:
   push:
-    branches: ['**']
+    branches: [main]
   pull_request:
     branches: [main]
 
