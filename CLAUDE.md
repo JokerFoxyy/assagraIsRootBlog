@@ -21,6 +21,7 @@ containers, Linux e segurança da informação**.
 | Conteúdo | Markdown / MDX via `@astrojs/mdx` + Content Collections |
 | Linguagem | TypeScript (`strict`) |
 | SEO | `@astrojs/sitemap` (gera `sitemap-index.xml`) |
+| Analytics | `@vercel/analytics` (Vercel Web Analytics — sem cookies) |
 | Hospedagem | Vercel |
 
 > **Sem frameworks de UI extras.** Nada de React/Vue/Svelte a menos que seja
@@ -122,6 +123,18 @@ Todas as queries filtram drafts com `getCollection('blog', ({ data }) => !data.d
 (fallback `/og-default.svg`). `Post.astro` repassa título/descrição do artigo.
 Canonical, `og:*` e `twitter:card` são resolvidos contra `site` do
 `astro.config.mjs`.
+
+## Analytics
+
+O componente `<Analytics />` de `@vercel/analytics/astro` está no `<head>`
+de `Base.astro`. É **Vercel Web Analytics**: sem cookies, sem dados pessoais,
+carrega o script (`/_vercel/insights/script.js`) só em runtime no navegador —
+por isso não aparece no HTML estático gerado pelo build, e dá 404 local em
+`npm run preview` (esperado; só resolve em produção na Vercel).
+
+Para os dados começarem a aparecer, é preciso **habilitar Web Analytics no
+dashboard da Vercel** (Project → Analytics → Enable) — isso não é
+configurável via código/CI, é passo manual único por projeto.
 
 ## CI/CD (GitHub Actions)
 
